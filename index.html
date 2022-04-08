@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1">
     <title>Sensors</title>
     <link href="sensor.css" rel="stylesheet">
-    <script>
-        var sensors = ['AbsoluteOrientationSensor', 
+    <script type="text/javascript">
+        sensors = ['AbsoluteOrientationSensor', 
                         'Accelerometer',
                     'AmbientLightSensor',
                 'GravitySensor',
@@ -16,19 +16,19 @@
         'Magnetometer',
         'OrientationSensor',
         'RelativeOrientationSensor'
-    ]
-        for(i=0;i<window.length; i++){
-            var el = document.createElement('div');
-            el.innerHTML = window[i];
-
-            document.getElementById('test').appendChild(el);
-        }
-
-    sensors.forEach(function(element) {
+    ];
+        function display(){
+            sensors.forEach(function(element) {
+            var de = document.createElement('div');
             if (element in window){
-                var ok = element;
+                de.innerHtml = element + ":true";
             }
-        });
+            else {
+                de.innerHtml = element + ":false";
+            }
+            de.innerHtml = "something went wrong";
+            document.getElementById('test').appendChild(de);
+        });}
     </script>
 </head>
 <body>
@@ -38,6 +38,7 @@
         <tr><td>ExSensor</td><td><span>Val1</span><span>Val2</span></td><td>int1</td></tr>
     </table>
 <button> Send </button>
+<button onclick="display()"> show </button>
 <div id="test"></div>
 </body>
 </html>
