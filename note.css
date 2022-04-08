@@ -1,0 +1,67 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 90%;
+    text-align: center;
+    padding: 5%;
+
+}
+
+nav, fieldset {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: space-around;
+    height: 5vh;
+    font-size: large;
+
+}
+nav button {
+    width: 10%;
+    height: 2em;
+}
+
+button i {
+    background-color: none;
+    color: black;
+    border-color: none;
+}
+
+#notes-container {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.note {
+    display: grid;
+    grid-template: 1fr / 1fr 1fr 1fr;
+    align-items: center;
+    justify-items: start;
+    width: 100%;
+}
+
+section, form {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+textarea {
+    resize: none;
+    overflow: hidden;
+    height:70vh;
+    display: block;
+}
+
+input[type="color"]{
+    width: 27px;
+    border-radius: 70px;
+    border: none;
+}
