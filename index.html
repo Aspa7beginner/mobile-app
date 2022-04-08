@@ -18,17 +18,29 @@
         'RelativeOrientationSensor'
     ];
         function display(){
+            var results = new Array;
             sensors.forEach(function(element) {
             var de = document.createElement('div');
             if (element in window){
-                de.innerHtml = element + ":true";
+                de.textContent = element + ":true";
+                results.push(element+":1")
             }
             else {
-                de.innerHtml = element + ":false";
+                de.textContent = element + ":false";
+                results.push(element+":");
             }
             de.innerHtml = "something went wrong";
             document.getElementById('test').appendChild(de);
-        });}
+        });
+        return results;
+    }
+
+    function active(){
+        display().forEach(function(el){
+            //continue from here
+            console.log(el);
+        });
+    }
     </script>
 </head>
 <body>
@@ -40,5 +52,6 @@
 <button> Send </button>
 <button onclick="display()"> show </button>
 <div id="test"></div>
+<div id="active"></div>
 </body>
 </html>
