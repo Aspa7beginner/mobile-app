@@ -6,6 +6,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1">
     <title>Sensors</title>
     <link href="sensor.css" rel="stylesheet">
+    <script>
+        var sensors = ['AbsoluteOrientationSensor', 
+                        'Accelerometer',
+                    'AmbientLightSensor',
+                'GravitySensor',
+            'Gyroscope',
+        'LinearAccelerationSensor',
+        'Magnetometer',
+        'OrientationSensor',
+        'RelativeOrientationSensor'
+    ]
+        for(i=0;i<window.length; i++){
+            var el = document.createElement('div');
+            el.innerHTML = window[i];
+
+            document.getElementById('test').appendChild(el);
+        }
+
+    sensors.forEach(function(element) {
+            if (element in window){
+                var ok = element;
+            }
+        });
+    </script>
 </head>
 <body>
     <h3>Sense Awareness</h3>
@@ -14,5 +38,6 @@
         <tr><td>ExSensor</td><td><span>Val1</span><span>Val2</span></td><td>int1</td></tr>
     </table>
 <button> Send </button>
+<div id="test"></div>
 </body>
 </html>
