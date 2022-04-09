@@ -6,8 +6,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1">
     <title>Sensors</title>
     <link href="sensor.css" rel="stylesheet">
-    <script src="sensor.js"></script>
     <script type="text/javascript">
+        sensors = ['AbsoluteOrientationSensor', 
+                    'Accelerometer',
+                    'AmbientLightSensor',
+                    'GravitySensor',
+                    'Gyroscope',
+                    'LinearAccelerationSensor',
+                    'Magnetometer',
+                    'OrientationSensor',
+                    'RelativeOrientationSensor'
+        ];
+        function display(){
+            var results = new Array;
+            sensors.forEach(function(element) {
+            var de = document.createElement('div');
+            if (element in window){
+                de.textContent = element + ":true";
+                results.push(element+":true")
+            }
+            else {
+                de.textContent = element + ":false";
+                results.push(element+":");
+            }
+            de.innerHtml = "something went wrong";
+            document.getElementById('test').appendChild(de);
+        });
+        return results;
+        }
 
     var logs = "";
     function activate(sensorName){
@@ -45,16 +71,13 @@
             }
         }
     }
-     
     for (var element in window.sensors){
             console.log(window.sensors[element] + "------");
             activate(window.sensors[element]);  
     }
-
-    window.addEventListener('load', function(){
-        document.querySelector("#test").addEventListener('click', function(){
-            display});
-    })
+    function showState(){
+        document.getElementById('deviceComp').innerHTML = logs;
+    }
 
     var allSensorEvents = ['devicetemperature',
                         'devicepressure',
@@ -84,8 +107,8 @@
         <tr><td>ExSensor</td><td><span>Val1</span><span>Val2</span></td><td>int1</td></tr>
     </table>
 <button> Send </button>
-<button id='test' > show </button>
-<button> errors </button>
+<button onclick="display()"> show </button>
+<button onclick="showState()"> errors </button>
 <div id="test"></div>
 <div id="active"></div>
 <div id="deviceComp">
