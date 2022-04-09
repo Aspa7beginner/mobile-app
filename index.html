@@ -94,7 +94,9 @@
             if(elm in window && window.elm !=null){
                 document.getElementById('deviceComp').appendChild(document.createTextNode("Sensor: "+elm));
             }else{
-                console.log("sensor event not detected or null");
+                document.getElementById('deviceComp')
+                .appendChild(document.createTextNode(elm+":-->sensor event not detected or null"));
+
             }
         })
     });
