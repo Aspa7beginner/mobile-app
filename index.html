@@ -35,48 +35,46 @@
         return results;
     }
 
+        function activate(sensorName){
+            try {
+                //accelerometer = new Accelerometer({ frequency: 10 });
+                let sensor = eval(`new ${sensorName}()`); 
+                sensor.onerror = function(event) {
+                    // Handle runtime errors.
+                    if (event.error.name === 'NotAllowedError') {
+                        document.getElementById('deviceComp').innerHTML = "<p>'Permission to access sensor was denied.</p>";
 
-        try {
-            accelerometer = new Accelerometer({ frequency: 10 });
-            accelerometer.onerror = function(event) {
-                // Handle runtime errors.
-                if (event.error.name === 'NotAllowedError') {
-                    console.log('Permission to access sensor was denied.');
-                    document.getElementById('deviceComp').innerHTML = "<p>'Permission to access sensor was denied.</p>";
+                    } else if (event.error.name === 'NotReadableError') {
+                        document.getElementById('deviceComp').innerHTML = "<p>Cannot connect to the sensor.</p>";
+                    }
+                };                    
+                sensor.onreading = function(e) {
+                    console.log(e);
+                    document.getElementById('deviceComp').innerHTML = "<p>All OK" + e + "</p>";
 
-                } else if (event.error.name === 'NotReadableError') {
-                    console.log('Cannot connect to the sensor.');
-                    document.getElementById('deviceComp').innerHTML = "<p>Cannot connect to the sensor.</p>";
+                };
+                sensor.start();
+            } catch (error) {
+                // Handle construction errors.
+                if (error.name === 'SecurityError') {
+                    document.getElementById('deviceComp').innerHTML = "<p>Sensor construction was blocked by the Permissions Policy.</p>";
+
+                } else if (error.name === 'ReferenceError') {
+                    document.getElementById('deviceComp').innerHTML = "<p>Sensor is not supported by the User Agent.</p>";
+
+                } else {
+                    throw error;
+                    document.getElementById('deviceComp').innerHTML = "<p>other error.</p>";
+
                 }
-            };                    
-            accelerometer.onreading = function(e) {
-                console.log(e);
-                document.getElementById('deviceComp').innerHTML = "<p>All OK" + e + "</p>";
-
-            };
-            accelerometer.start();
-        } catch (error) {
-            // Handle construction errors.
-            if (error.name === 'SecurityError') {
-                console.log('Sensor construction was blocked by the Permissions Policy.');
-                document.getElementById('deviceComp').innerHTML = "<p>Sensor construction was blocked by the Permissions Policy.</p>";
-
-            } else if (error.name === 'ReferenceError') {
-                console.log('Sensor is not supported by the User Agent.');
-                document.getElementById('deviceComp').innerHTML = "<p>Sensor is not supported by the User Agent.</p>";
-
-            } else {
-                throw error;
-                document.getElementById('deviceComp').innerHTML = "<p>other error.</p>";
-
             }
         }
-
-    /*for (var element in window.sensors){
-        console.log(typeof element);
+    for (var element in window.sensors){
         console.log(window.sensors[element]);
-        
-    }*/
+        if (element in window){
+            activate(window.sensors[element]);
+        }
+    }
     </script>
 </head>
 <body>
