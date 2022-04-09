@@ -33,45 +33,50 @@
             document.getElementById('test').appendChild(de);
         });
         return results;
-    }
+        }
 
-        function activate(sensorName){
-            try {
-                //accelerometer = new Accelerometer({ frequency: 10 });
-                let sensor = eval(`new ${sensorName}()`); 
-                sensor.onerror = function(event) {
-                    // Handle runtime errors.
-                    if (event.error.name === 'NotAllowedError') {
-                        document.getElementById('deviceComp').innerHTML = "<p>'Permission to access sensor was denied.</p>";
-
-                    } else if (event.error.name === 'NotReadableError') {
-                        document.getElementById('deviceComp').innerHTML = "<p>Cannot connect to the sensor.</p>";
-                    }
-                };                    
-                sensor.onreading = function(e) {
-                    console.log(e);
-                    document.getElementById('deviceComp').innerHTML = "<p>All OK" + e + "</p>";
-
-                };
-                sensor.start();
-            } catch (error) {
-                // Handle construction errors.
-                if (error.name === 'SecurityError') {
-                    document.getElementById('deviceComp').innerHTML = "<p>Sensor construction was blocked by the Permissions Policy.</p>";
-
-                } else if (error.name === 'ReferenceError') {
-                    document.getElementById('deviceComp').innerHTML = "<p>Sensor is not supported by the User Agent.</p>";
-
-                } else {
-                    throw error;
-                    document.getElementById('deviceComp').innerHTML = "<p>other error.</p>";
-
+    var logs = "";
+    function activate(sensorName){
+        logs += sensorName+"------------------";
+        try {
+            //accelerometer = new Accelerometer({ frequency: 10 });
+            sensor = eval( `new ${sensorName}()`);
+            sensor.onerror = function(event) {
+                // Handle runtime errors.
+                if (event.error.name === 'NotAllowedError') {
+                    console.log('Permission to access sensor was denied.');
+                    logs+='Permission to access sensor was denied.<br>';
+                } else if (event.error.name === 'NotReadableError') {
+                    console.log('Cannot connect to the sensor.');
+                    logs+= sensorName + '::--->  Cannot connect to the sensor.<br>';
                 }
+            };                    
+            sensor.onreading = function(e) {
+                console.log(e);
+            };
+            sensor.start();
+            console.log('sensor activated.');
+            logs+='Sensor activated.<br>';
+        } catch (error) {
+            // Handle construction errors.
+            if (error.name === 'SecurityError') {
+                console.log('Sensor construction was blocked by the Permissions Policy.');
+                logs+='Sensor construction was blocked by the Permissions Policy.<br>';
+            } else if (error.name === 'ReferenceError') {
+                console.log('Sensor is not supported by the User Agent.');
+                logs+='Sensor is not supported by the User Agent.<br>';
+            } else {
+                console.log("Other error: "+ error.name);
+                logs+= "Other error: "+ error.name + "<br>";
             }
         }
+    }
     for (var element in window.sensors){
-        console.log(window.sensors[element]);
-        activate(window.sensors[element]);
+            console.log(window.sensors[element] + "------");
+            activate(window.sensors[element]);  
+    }
+    function showState(){
+        document.getElementById('deviceComp').innerHTML = logs;
     }
     </script>
 </head>
@@ -83,7 +88,7 @@
     </table>
 <button> Send </button>
 <button onclick="display()"> show </button>
-<button onclick="activate()"> errors </button>
+<button onclick="showState()"> errors </button>
 <div id="test"></div>
 <div id="active"></div>
 <div id="deviceComp">
