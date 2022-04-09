@@ -8,22 +8,22 @@
     <link href="sensor.css" rel="stylesheet">
     <script type="text/javascript">
         sensors = ['AbsoluteOrientationSensor', 
-                        'Accelerometer',
+                    'Accelerometer',
                     'AmbientLightSensor',
-                'GravitySensor',
-            'Gyroscope',
-        'LinearAccelerationSensor',
-        'Magnetometer',
-        'OrientationSensor',
-        'RelativeOrientationSensor'
-    ];
+                    'GravitySensor',
+                    'Gyroscope',
+                    'LinearAccelerationSensor',
+                    'Magnetometer',
+                    'OrientationSensor',
+                    'RelativeOrientationSensor'
+        ];
         function display(){
             var results = new Array;
             sensors.forEach(function(element) {
             var de = document.createElement('div');
             if (element in window){
                 de.textContent = element + ":true";
-                results.push(element+":1")
+                results.push(element+":true")
             }
             else {
                 de.textContent = element + ":false";
@@ -35,12 +35,37 @@
         return results;
     }
 
-    function active(){
-        display().forEach(function(el){
-            //continue from here
-            console.log(el);
-        });
-    }
+
+        try {
+            accelerometer = new Accelerometer({ frequency: 10 });
+            accelerometer.onerror = function(event) {
+                // Handle runtime errors.
+                if (event.error.name === 'NotAllowedError') {
+                    console.log('Permission to access sensor was denied.');
+                } else if (event.error.name === 'NotReadableError') {
+                    console.log('Cannot connect to the sensor.');
+                }
+            };                    
+            accelerometer.onreading = function(e) {
+                console.log(e);
+            };
+            accelerometer.start();
+        } catch (error) {
+            // Handle construction errors.
+            if (error.name === 'SecurityError') {
+                console.log('Sensor construction was blocked by the Permissions Policy.');
+            } else if (error.name === 'ReferenceError') {
+                console.log('Sensor is not supported by the User Agent.');
+            } else {
+                throw error;
+            }
+        }
+
+    /*for (var element in window.sensors){
+        console.log(typeof element);
+        console.log(window.sensors[element]);
+        
+    }*/
     </script>
 </head>
 <body>
@@ -51,7 +76,10 @@
     </table>
 <button> Send </button>
 <button onclick="display()"> show </button>
+<button onclick="active()"> errors </button>
 <div id="test"></div>
 <div id="active"></div>
+<div id="deviceComp">
+</div>
 </body>
 </html>
