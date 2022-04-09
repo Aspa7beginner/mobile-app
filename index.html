@@ -96,9 +96,54 @@
             }else{
                 document.getElementById('deviceComp')
                 .appendChild(document.createTextNode(elm+":-->sensor event not detected or null"));
-
             }
-        })
+        });
+
+        let log = document.getElementById("sens-ev-val");
+    // https://dvcs.w3.org/hg/dap/raw-file/tip/sensor-api/Overview.html
+    window.addEventListener("devicetemperature", function (ev) {
+        log.textContent += "devicetemperature " + ev.value + "\n";
+    }, false);
+    window.addEventListener("devicepressure", function (ev) {
+        log.textContent += "devicepressure " + ev.value + "\n";
+    }, false);
+    window.addEventListener("devicelight", function (ev) {
+        log.textContent += "devicelight " + ev.value + "\n";
+        // toy tric
+        log.style.color = "rgb(" + (255 - 2*ev.value) + ",0,0)";
+        log.style.backgroundColor = "rgb(0,0," + (2*ev.value) + ")";
+    }, false);
+    window.addEventListener("deviceproximity", function (ev) {
+        log.textContent += "deviceproximity " + ev.value + "\n";
+        // toy tric
+        if (ev.value < 3) navigator.vibrate([300, 100, 100]);
+    }, false);
+    window.addEventListener("devicenoise", function (ev) {
+        log.textContent += "devicenoise " + ev.value + "\n";
+    }, false);
+    window.addEventListener("devicehumidity", function (ev) {
+        log.textContent += "devicehumidity " + ev.value + "\n";
+    }, false);
+
+    //https://wiki.mozilla.org/Magnetic_Field_Events
+    window.addEventListener("devicemagneticfield", function (ev) {
+        log.textContent += "devicemagneticfield " + [ev.x, ev.y, ev.x]+ "\n";
+    }, false);
+
+    // https://dvcs.w3.org/hg/dap/raw-file/default/pressure/Overview.html
+    window.addEventListener("atmpressure", function (ev) {
+        log.textContent += "atmpressure " + ev.value + "\n";
+    }, false);
+    
+    // https://dvcs.w3.org/hg/dap/raw-file/tip/humidity/Overview.html
+    window.addEventListener("humidity", function (ev) {
+        log.textContent += "humidity " + ev.value + "\n";
+    }, false);
+    
+    // https://dvcs.w3.org/hg/dap/raw-file/tip/temperature/Overview.html
+    window.addEventListener("temperature", function (ev) {
+        log.textContent += "temperature " + [ev.f, ev.c, ev.k, ev.value] + "\n";
+    }, false);
     });
     </script>
 </head>
