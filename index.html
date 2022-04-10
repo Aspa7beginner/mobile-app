@@ -7,10 +7,10 @@
     <title>Sensors</title>
     <script type="text/javascript">
 
-        var navLogs2 = "";
+        var navLogs2 = "Results: ";
         var worker = new Worker('gyr.js');
         worker.onmessage = function(ev){
-            navLogs2 = ev.data;
+            navLogs2 += ev.data;
         }
         worker.onerror = function(ev){
             alert('something went wrong');
@@ -93,7 +93,7 @@
     });
     </script>
 </head>
-<body style="background-color:#3268c7; color:#abb1ba">
+<body style="background-color:#405374; color:#abb1ba">
     <h3>Sense Awareness</h3>
     <table>
         <tr><th>Sensors</th><th>Value</th><th>Period</th></tr>
