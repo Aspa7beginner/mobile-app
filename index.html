@@ -35,46 +35,32 @@
         return results;
         }
 
-    var logs = "";
-    function activate(sensorName){
-        logs += sensorName+"------------------";
-        try {
-            //accelerometer = new Accelerometer({ frequency: 10 });
-            sensor = eval( `new ${sensorName}()`);
-            sensor.onerror = function(event) {
-                // Handle runtime errors.
-                if (event.error.name === 'NotAllowedError') {
-                    console.log('Permission to access sensor was denied.');
-                    logs+='Permission to access sensor was denied.<br>';
-                } else if (event.error.name === 'NotReadableError') {
-                    console.log('Cannot connect to the sensor.');
-                    logs+= sensorName + '::--->  Cannot connect to the sensor.<br>';
-                }
-            };                    
-            sensor.onreading = function(e) {
-                console.log(e);
-            };
-            sensor.start();
-            console.log('sensor activated.');
-            logs+='Sensor activated.<br>';
-        } catch (error) {
-            // Handle construction errors.
-            if (error.name === 'SecurityError') {
-                console.log('Sensor construction was blocked by the Permissions Policy.');
-                logs+='Sensor construction was blocked by the Permissions Policy.<br>';
-            } else if (error.name === 'ReferenceError') {
-                console.log('Sensor is not supported by the User Agent.');
-                logs+='Sensor is not supported by the User Agent.<br>';
-            } else {
-                console.log("Other error: "+ error.name);
-                logs+= "Other error: "+ error.name + "<br>";
-            }
-        }
-    }
+        var logs = "";
+    var worker = new Worker("gyroscope.js");
+
+     
     for (var element in window.sensors){
             console.log(window.sensors[element] + "------");
-            activate(window.sensors[element]);  
+            //activate(window.sensors[element]);  
     }
+
+    window.addEventListener('load', function(){
+            document.getElementById('deviceComp').innerHTML = logs;
+            document.querySelector("#test1").addEventListener('click', display);
+            worker.onmessage = function(event){ 
+                document.getElementById('sensor-list').innerHTML = "<button>Gyroscope</botton>";
+                document.getElementById('sensor-list').childNodes[0].addEventListener('click', worker.postMessage("true"));
+                logs = event.data.logs;
+                console.log(event.data.reading);
+                document.getElementById('sensor-list').appendChild(document.createElement('p'));
+                document.getElementById('sensor-list').childNodes[1].setAttribute('class',' sensor');
+                document.querySelector('.sensor').innerHTML = "Measurement: " + event.data.reading;
+                document.getElementById('sensor-list').appendChild(document.createElement('p'));
+                document.getElementById('sensor-list').childNodes[2].setAttribute('class',' sensor-log');
+                document.querySelector('.sensor-log').innerHTML = "" + event.data.logs;
+            }
+    });
+
     function showState(){
         document.getElementById('deviceComp').innerHTML = logs;
     }
@@ -99,7 +85,7 @@
             }
         });
 
-        let log = document.getElementById("sens-ev-val");
+    let log = document.getElementById("sens-ev-val");
     // https://dvcs.w3.org/hg/dap/raw-file/tip/sensor-api/Overview.html
     window.addEventListener("devicetemperature", function (ev) {
         log.textContent += "devicetemperature " + ev.value + "\n";
@@ -154,7 +140,7 @@
         <tr><td>ExSensor</td><td><span>Val1</span><span>Val2</span></td><td>int1</td></tr>
     </table>
 <button> Send </button>
-<button onclick="display()"> show </button>
+<button id="test1"> show </button>
 <button onclick="showState()"> errors </button>
 <div id="test"></div>
 <div id="active"></div>
