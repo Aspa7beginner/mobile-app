@@ -5,7 +5,7 @@ self.navigator.permissions.query({name: 'gyroscope', userStopRequest: true})
     if(result.state === 'denied'){
         navLogs += "inerror-";
         if (error.name === 'NotAllowedError' || 'NotReadableError') {
-            state.logs +='-Permission to access sensor was denied.<br> or ::--->'+ 
+            navLogs +='-Permission to access sensor was denied.<br> or ::--->'+ 
              'Cannot connect to the sensor.<br>';
             alert('-Permission to access sensor was denied');
         }
@@ -31,7 +31,6 @@ self.navigator.permissions.query({name: 'gyroscope', userStopRequest: true})
             }
         }
     }
-
     self.postMessage(navLogs);
 
 });

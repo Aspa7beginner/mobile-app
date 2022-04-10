@@ -7,10 +7,10 @@
     <title>Sensors</title>
     <script type="text/javascript">
 
-        var navLogs2 = "Results: ";
         var worker = new Worker('gyr.js');
         worker.onmessage = function(ev){
-            navLogs2 += ev.data;
+            var divs = document.getElementById("or2");
+            divs.innerHTML = ev.data;
         }
         worker.onerror = function(ev){
             alert('something went wrong');
@@ -53,7 +53,6 @@
     window.addEventListener('load', function(){
             //document.getElementById('deviceComp').innerHTML = logs;
             document.querySelector("#test1").addEventListener('click', display);
-            document.getElementById('or2').innerHTML = "<p>"+navLogs2+"</p>";
     });
 
 
