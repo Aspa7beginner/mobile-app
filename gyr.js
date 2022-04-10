@@ -3,7 +3,7 @@ self.navigator.permissions.query({name: 'gyroscope', userStopRequest: true})
 .then(function(result){
     navLogs+="in nav-";
     if(result.state === 'denied'){
-        navLogs += "inerror-";
+        navLogs += "inerror:"+error.name+"---";
         if (error.name === 'NotAllowedError' || 'NotReadableError') {
             navLogs +='-Permission to access sensor was denied.<br> or ::--->'+ 
              'Cannot connect to the sensor.<br>';
