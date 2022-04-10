@@ -4,7 +4,7 @@ let state = {active: false,
 
 let userStopRequest = 'false' || this.onmessage;
 
-navigator.permissions.query({name: 'gyroscope'})
+navigator.permissions.query({name: 'gyroscope', userStopRequest: true})
 .then(function(result){
     state.logs += "ingranted";
     if(result.state === 'granted' && !this.onmessage){
