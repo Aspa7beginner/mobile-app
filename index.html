@@ -7,7 +7,7 @@
     <title>Sensors</title>
     <script type="text/javascript">
 
-        navLogs = ""
+        navLogs = "";
         var worker = new Worker('gyr.js');
         worker.onmessage = function(ev){
             alert("completed" + ev.data +'iterations<br>');
