@@ -7,14 +7,42 @@
     <title>Sensors</title>
     <script type="text/javascript">
 
-        var worker = new Worker('gyr.js');
-        worker.onmessage = function(ev){
-            var divs = document.getElementById("or2");
-            divs.innerHTML = ev.data;
+
+        let navLogs = "";
+self.navigator.permissions.query({name: 'gyroscope', userStopRequest: true})
+.then(function(result){
+    navLogs+="innav---";
+    if(result.state === 'denied'){
+        navLogs += "inerror:"+error.name+"---";
+        if (error.name === 'NotAllowedError' || 'NotReadableError') {
+            navLogs +='-Permission to access sensor was denied.<br> or ::--->'+ 
+             'Cannot connect to the sensor.<br>';
+            alert('---Permission to access sensor was denied');
         }
-        worker.onerror = function(ev){
-            alert('something went wrong');
+    }
+    else{
+        try{
+            navLogs+="intry-";
+            self.gyroscope = new Gyroscope({frequency: 20});
+            self.gyroscope.addEventListener('reading', function(e){
+                navLogs += e;
+                navLogs += self.gyroscope.x + "";
+            });
+            self.gyroscope.start();
+            navLogs+="afterstart-";
+        }catch(error){
+            navLogs+="inerrorconstruction-";
+            if (error.name === 'SecurityError') {
+                navLogs+='---Sensor construction was blocked by the Permissions Policy.<br>';
+            } else if (error.name === 'ReferenceError') {
+                navLogs+='---Sensor is not supported by the User Agent.<br>';
+            } else {
+                navLogs+= "---Other error: "+ error.name + "<br>";
+            }
         }
+    }
+
+});
 
 
         sensors = ['AbsoluteOrientationSensor', 
@@ -53,6 +81,8 @@
     window.addEventListener('load', function(){
             //document.getElementById('deviceComp').innerHTML = logs;
             document.querySelector("#test1").addEventListener('click', display);
+            document.getElementById("or2").innerHTML = navLogs;
+
 
     });
 
@@ -93,7 +123,7 @@
     });
     </script>
 </head>
-<body style="background-color:#373b42; color:#abb1ba">
+<body style="background-color:#272d38; color:#abb1ba">
     <h3>Sense Awareness</h3>
     <table>
         <tr><th>Sensors</th><th>Value</th><th>Period</th></tr>
