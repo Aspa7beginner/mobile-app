@@ -67,10 +67,6 @@ navigator.permissions.query({name: 'gyroscope', userStopRequest: true})
         return results;
         }
 
-        var logs = "";
-    var worker = new Worker("gyroscope.js");
-
-     
     for (var element in window.sensors){
             console.log(window.sensors[element] + "------");
             //activate(window.sensors[element]);  
