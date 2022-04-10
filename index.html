@@ -6,7 +6,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1">
     <title>Sensors</title>
     <link href="sensor.css" rel="stylesheet">
+
     <script type="text/javascript">
+
+function getRandomColor() {
+  var letters = '0123456789ABCDEF';
+  var color = '#';
+  for (var i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+}
+
+
         sensors = ['AbsoluteOrientationSensor', 
                     'Accelerometer',
                     'AmbientLightSensor',
@@ -77,6 +89,8 @@
                         'temperature']
     
     window.addEventListener('load',function(){
+        document.getElementsByTagName('body').style.backgroundColor = getRandomColor();
+
         allSensorEvents.forEach(function(elm){
             if(elm in window && window.elm !=null){
                 document.getElementById('deviceComp').appendChild(document.createTextNode("Sensor: "+elm));
