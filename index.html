@@ -13,7 +13,7 @@ navigator.permissions.query({name: 'gyroscope', userStopRequest: true})
     navLogs+="in nav";
     if(result.state === 'granted'){
         try{
-            gyroscope = new Gyroscope({frequency: 1000});
+            gyroscope = new Gyroscope({frequency: 60});
             gyroscope.addEventListener('reading', function(e){
                 navLogs += e;
                 state.reading = e;
