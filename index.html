@@ -7,11 +7,10 @@
     <title>Sensors</title>
     <script type="text/javascript">
 
-        navLogs = "";
+        var navLogs2 = "";
         var worker = new Worker('gyr.js');
         worker.onmessage = function(ev){
-            alert("completed" + ev.data +'iterations<br>');
-            navLogs = ev.data;
+            navLogs2 = ev.data;
         }
         worker.onerror = function(ev){
             alert('something went wrong');
@@ -54,7 +53,7 @@
     window.addEventListener('load', function(){
             //document.getElementById('deviceComp').innerHTML = logs;
             document.querySelector("#test1").addEventListener('click', display);
-            document.getElementById('or2').innerHTML = "<p>"+navLogs+"</p>";
+            document.getElementById('or2').innerHTML = "<p>"+navLogs2+"</p>";
     });
 
 
@@ -94,7 +93,7 @@
     });
     </script>
 </head>
-<body style="background-color:#354258; color:#abb1ba">
+<body style="background-color:#3268c7; color:#abb1ba">
     <h3>Sense Awareness</h3>
     <table>
         <tr><th>Sensors</th><th>Value</th><th>Period</th></tr>
