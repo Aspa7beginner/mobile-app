@@ -7,36 +7,13 @@
     <title>Sensors</title>
     <script type="text/javascript">
 
-var navLogs = "";
-navigator.permissions.query({name: 'gyroscope', userStopRequest: true})
-.then(function(result){
-    navLogs+="in nav";
-    if(result.state === 'granted'){
-        try{
-            gyroscope = new Gyroscope({frequency: 60});
-            gyroscope.addEventListener('reading', function(e){
-                navLogs += e;
-                state.reading = e;
-            });
-            gyroscope.start();
-        }catch(error){
-                if (error.name === 'SecurityError') {
-                    navLogs+='Sensor construction was blocked by the Permissions Policy.<br>';
-                } else if (error.name === 'ReferenceError') {
-                    navLogs+='Sensor is not supported by the User Agent.<br>';
-                } else {
-                    navLogs+= "Other error: "+ error.name + "<br>";
-                }
+        var worker = new Worker('gyr.js');
+        worker.onmessage = function(ev){
+            alert("completed" + event.data +'iterations');
         }
-    }
-    else{
-        navLogs += "inerror";
-        if (error.name === 'NotAllowedError' || 'NotReadableError') {
-            state.logs +='Permission to access sensor was denied.<br> or ::--->  Cannot connect to the sensor.<br>';
-            alert('Permission to access sensor was denied');
+        worker.onerror = function(ev){
+            alert('something went wrong');
         }
-    }
-});
 
 
         sensors = ['AbsoluteOrientationSensor', 
@@ -75,7 +52,7 @@ navigator.permissions.query({name: 'gyroscope', userStopRequest: true})
     window.addEventListener('load', function(){
             //document.getElementById('deviceComp').innerHTML = logs;
             document.querySelector("#test1").addEventListener('click', display);
-            document.getElementById('or').innerHTML = "<p>"+navLogs+"</p>";
+            //document.getElementById('or').innerHTML = "<p>"+navLogs+"</p>";
     });
 
 

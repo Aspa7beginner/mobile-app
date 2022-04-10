@@ -1,42 +1,40 @@
-let state = {active: false,
-            reading: 0,
-            logs: "Gyroscope -----------------"};
-
-let userStopRequest = 'false' || this.onmessage;
-
-navigator.permissions.query({name: 'gyroscope', userStopRequest: true})
+let navLogs = "";
+self.navigator.permissions.query({name: 'gyroscope', userStopRequest: true})
 .then(function(result){
-    state.logs += "ingranted";
-    if(result.state === 'granted' && !this.onmessage){
-        try{
-            gyroscope = new Gyroscope({frequency: 1000});
-            gyroscope.addEventListener('reading', function(e){
-                state.logs += e;
-                state.reading = e;
-            });
-            gyroscope.start();
-            state.active = true;
-        }catch(error){
-                if (error.name === 'SecurityError') {
-                    state.logs+='Sensor construction was blocked by the Permissions Policy.<br>';
-                } else if (error.name === 'ReferenceError') {
-                    state.logs+='Sensor is not supported by the User Agent.<br>';
-                } else {
-                    state.logs+= "Other error: "+ error.name + "<br>";
-                }
+    navLogs+="in nav-";
+    if(result.state === 'denied'){
+        navLogs += "inerror-";
+        if (error.name === 'NotAllowedError' || 'NotReadableError') {
+            state.logs +='-Permission to access sensor was denied.<br> or ::--->'+ 
+             'Cannot connect to the sensor.<br>';
+            alert('-Permission to access sensor was denied');
         }
+        self.terminate();
     }
     else{
-        state.logs += "inerror";
-        if (error.name === 'NotAllowedError' || 'NotReadableError') {
-            state.logs +='Permission to access sensor was denied.<br> or ::--->  Cannot connect to the sensor.<br>';
-            alert('Permission to access sensor was denied');
-        } 
-        if (this.onmessage){
-            console.log(this.onmessage);
-            gyroscope.stop();
+        try{
+            navLogs+="intry-";
+            self.gyroscope = new Gyroscope({frequency: 20});
+            self.gyroscope.addEventListener('reading', function(e){
+                navLogs += e;
+                navLogs += self.gyroscope.x + "";
+            });
+            self.gyroscope.start();
+            navLogs+="afterstart-";
+        }catch(error){
+            navLogs+="inerrorconstruction-";
+            if (error.name === 'SecurityError') {
+                navLogs+='-Sensor construction was blocked by the Permissions Policy.<br>';
+            } else if (error.name === 'ReferenceError') {
+                navLogs+='Sensor is not supported by the User Agent.<br>';
+            } else {
+                navLogs+= "-Other error: "+ error.name + "<br>";
+            }
         }
     }
+
+    setTimeout(function(){
+        self.postMessage(navLogs);
+    },1000);
 });
-state.logs += "not at all in granted";
-this.postMessage(state);
+
