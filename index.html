@@ -74,15 +74,6 @@ function getRandomColor() {
     });
 
 
-    window.addEventListener("devicelight", function (ev) {
-        document.getElementById('deviceComp').innerHTML =
-        "<p> devicelight " + ev.value + "</p>";
-        // toy tric
-        //log.style.color = "rgb(" + (255 - 2*ev.value) + ",0,0)";
-        //log.style.backgroundColor = "rgb(0,0," + (2*ev.value) + ")";
-        
-
-    }, false);
  
 
     var allSensorEvents = ['devicetemperature',
@@ -97,6 +88,18 @@ function getRandomColor() {
                         'temperature']
     
     window.addEventListener('load',function(){
+        
+    window.addEventListener("devicelight", function (ev) {
+        document.getElementById('deviceComp').innerHTML =
+        "<p> devicelight " + ev.value + "</p>";
+        // toy tric
+        //log.style.color = "rgb(" + (255 - 2*ev.value) + ",0,0)";
+        //log.style.backgroundColor = "rgb(0,0," + (2*ev.value) + ")";
+        
+
+    }, false);
+
+
         document.getElementsByTagName('body')[0].style.backgroundColor = getRandomColor();
 
         allSensorEvents.forEach(function(elm){
