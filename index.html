@@ -9,7 +9,7 @@
 
         var worker = new Worker('gyr.js');
         worker.onmessage = function(ev){
-            alert("completed" + ev.data +'iterations');
+            alert("completed" + ev.data +'iterations<br>');
         }
         worker.onerror = function(ev){
             alert('something went wrong');
