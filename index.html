@@ -89,7 +89,7 @@ function getRandomColor() {
                         'temperature']
     
     window.addEventListener('load',function(){
-        document.getElementsByTagName('body').style.backgroundColor = getRandomColor();
+        document.getElementsByTagName('body')[0].style.backgroundColor = getRandomColor();
 
         allSensorEvents.forEach(function(elm){
             if(elm in window && window.elm !=null){
