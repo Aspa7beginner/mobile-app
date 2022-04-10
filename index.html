@@ -9,8 +9,11 @@
 
         var worker = new Worker('gyr.js');
         worker.onmessage = function(ev){
-            var divs = document.getElementById("or2");
+            var divs = document.getElementById("sens-logs");
             divs.innerHTML = ev.data;
+            document.addEventListener('click', function(ev){
+                worker.postMessage('diactivate');
+            })
         }
         worker.onerror = function(ev){
             alert('something went wrong');
@@ -29,11 +32,13 @@
         ];
         function display(){
             var results = new Array;
+            var _ = "";
             sensors.forEach(function(element) {
             var de = document.createElement('div');
             if (element in window){
                 de.textContent = element + ":true";
                 results.push(element+":true")
+                _ += '<tr><td><button id="Sensor">'+ element + '</button></td><td id="sens-vals"></td><td id="sens-logs"></td>'
             }
             else {
                 de.textContent = element + ":false";
@@ -42,6 +47,8 @@
             de.innerHtml = "something went wrong";
             document.getElementById('test').appendChild(de);
         });
+        document.getElementById('sensor-list').innerHTML = _;
+
         return results;
         }
 
@@ -49,13 +56,6 @@
             console.log(window.sensors[element] + "------");
             //activate(window.sensors[element]);  
     }
-
-    window.addEventListener('load', function(){
-            //document.getElementById('deviceComp').innerHTML = logs;
-            document.querySelector("#test1").addEventListener('click', display);
-
-    });
-
 
  
 
@@ -72,16 +72,14 @@
     
     window.addEventListener('load',function(){
         
-    window.addEventListener("devicelight", function (ev) {
-        document.getElementById('or').innerHTML =
-        "<p> devicelight " + ev.value + "</p>";
-        // toy tric
-        //log.style.color = "rgb(" + (255 - 2*ev.value) + ",0,0)";
-        //log.style.backgroundColor = "rgb(0,0," + (2*ev.value) + ")";
-        
-
-    }, false);
-
+        window.addEventListener("devicelight", function (ev) {
+            document.getElementById('or').innerHTML =
+            "<p> devicelight " + ev.value + "</p>";
+            // toy tric
+            //log.style.color = "rgb(" + (255 - 2*ev.value) + ",0,0)";
+            //log.style.backgroundColor = "rgb(0,0," + (2*ev.value) + ")";
+                
+        }, false);
         allSensorEvents.forEach(function(elm){
             if(elm in window && window.elm !=null){
                 document.getElementById('deviceComp').appendChild(document.createTextNode("Sensor: "+elm));
@@ -90,10 +88,12 @@
                 .appendChild(document.createTextNode(elm+":-->sensor event not detected or null"));
             }
         });
+        display();
     });
+
     </script>
 </head>
-<body style="background-color:#272d38; color:#abb1ba">
+<body style="background-color:#405374; color:#abb1ba">
     <h3>Sense Awareness</h3>
     <table>
         <tr><th>Sensors</th><th>Value</th><th>Period</th></tr>
@@ -104,10 +104,9 @@
 <button onclick="showState()"> errors </button>
 <div id="test"></div>
 <div id="active"></div>
-<div id="deviceComp"></div>
-<div id="sens-ev-val"></div>
-<div id="sensor-list"></div>
+<table id="sensor-list"></table>
 <div id="or"></div>
 <div id="or2"></div>
+<div id="deviceComp"></div>
 </body>
 </html>
