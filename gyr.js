@@ -1,5 +1,5 @@
 let navLogs = "";
-self.navigator.permissions.query({name: 'gyroscope', userStopRequest: true})
+self.navigator.permissions.query({name: 'gyroscope'})
 .then(function(result){
     navLogs+="innav---";
     if(result.state === 'denied'){
