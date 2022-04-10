@@ -7,6 +7,38 @@
     <title>Sensors</title>
     <script type="text/javascript">
 
+var navLogs = "";
+navigator.permissions.query({name: 'gyroscope', userStopRequest: true})
+.then(function(result){
+    navLogs+="in nav";
+    if(result.state === 'granted'){
+        try{
+            gyroscope = new Gyroscope({frequency: 1000});
+            gyroscope.addEventListener('reading', function(e){
+                navLogs += e;
+                state.reading = e;
+            });
+            gyroscope.start();
+        }catch(error){
+                if (error.name === 'SecurityError') {
+                    navLogs+='Sensor construction was blocked by the Permissions Policy.<br>';
+                } else if (error.name === 'ReferenceError') {
+                    navLogs+='Sensor is not supported by the User Agent.<br>';
+                } else {
+                    navLogs+= "Other error: "+ error.name + "<br>";
+                }
+        }
+    }
+    else{
+        navLogs += "inerror";
+        if (error.name === 'NotAllowedError' || 'NotReadableError') {
+            state.logs +='Permission to access sensor was denied.<br> or ::--->  Cannot connect to the sensor.<br>';
+            alert('Permission to access sensor was denied');
+        }
+    }
+});
+
+
         sensors = ['AbsoluteOrientationSensor', 
                     'Accelerometer',
                     'AmbientLightSensor',
@@ -47,18 +79,7 @@
     window.addEventListener('load', function(){
             document.getElementById('deviceComp').innerHTML = logs;
             document.querySelector("#test1").addEventListener('click', display);
-            worker.onmessage = function(event){ 
-                document.getElementById('sensor-list').innerHTML = "<button>Gyroscope</botton>";
-                document.getElementById('sensor-list').childNodes[0].addEventListener('click', worker.postMessage("true"));
-                logs = event.data.logs;
-                console.log(event.data.reading);
-                document.getElementById('sensor-list').appendChild(document.createElement('p'));
-                document.getElementById('sensor-list').childNodes[1].setAttribute('class',' sensor');
-                document.querySelector('.sensor').innerHTML = "Measurement: " + event.data.reading;
-                document.getElementById('sensor-list').appendChild(document.createElement('p'));
-                document.getElementById('sensor-list').childNodes[2].setAttribute('class',' sensor-log');
-                document.querySelector('.sensor-log').innerHTML = "" + event.data.logs;
-            }
+            document.getElementById('or').innerHTML = "<p>"+navLogs+"</p>";
     });
 
 
