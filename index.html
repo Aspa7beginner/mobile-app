@@ -12,7 +12,7 @@
             alert("completed" + event.data +'iterations');
         }
         worker.onerror = function(ev){
-            alert('something went wrong');
+            alert(worker.error.name);
         }
 
 
