@@ -7,9 +7,11 @@
     <title>Sensors</title>
     <script type="text/javascript">
 
+        navLogs = ""
         var worker = new Worker('gyr.js');
         worker.onmessage = function(ev){
             alert("completed" + ev.data +'iterations<br>');
+            navLogs = ev.data;
         }
         worker.onerror = function(ev){
             alert('something went wrong');
@@ -52,7 +54,7 @@
     window.addEventListener('load', function(){
             //document.getElementById('deviceComp').innerHTML = logs;
             document.querySelector("#test1").addEventListener('click', display);
-            //document.getElementById('or').innerHTML = "<p>"+navLogs+"</p>";
+            document.getElementById('or').innerHTML = "<p>"+navLogs+"</p>";
     });
 
 
