@@ -9,7 +9,6 @@ self.navigator.permissions.query({name: 'gyroscope', userStopRequest: true})
              'Cannot connect to the sensor.<br>';
             alert('-Permission to access sensor was denied');
         }
-        self.terminate();
     }
     else{
         try{
@@ -33,8 +32,7 @@ self.navigator.permissions.query({name: 'gyroscope', userStopRequest: true})
         }
     }
 
-    setTimeout(function(){
-        self.postMessage(navLogs);
-    },1000);
+    self.postMessage(navLogs);
+
 });
 
