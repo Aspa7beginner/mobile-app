@@ -7,42 +7,14 @@
     <title>Sensors</title>
     <script type="text/javascript">
 
-
-        let navLogs = "";
-self.navigator.permissions.query({name: 'gyroscope', userStopRequest: true})
-.then(function(result){
-    navLogs+="innav---";
-    if(result.state === 'denied'){
-        navLogs += "inerror:"+error.name+"---";
-        if (error.name === 'NotAllowedError' || 'NotReadableError') {
-            navLogs +='-Permission to access sensor was denied.<br> or ::--->'+ 
-             'Cannot connect to the sensor.<br>';
-            alert('---Permission to access sensor was denied');
+        var worker = new Worker('gyr.js');
+        worker.onmessage = function(ev){
+            var divs = document.getElementById("or2");
+            divs.innerHTML = ev.data;
         }
-    }
-    else{
-        try{
-            navLogs+="intry-";
-            self.gyroscope = new Gyroscope({frequency: 20});
-            self.gyroscope.addEventListener('reading', function(e){
-                navLogs += e;
-                navLogs += self.gyroscope.x + "";
-            });
-            self.gyroscope.start();
-            navLogs+="afterstart-";
-        }catch(error){
-            navLogs+="inerrorconstruction-";
-            if (error.name === 'SecurityError') {
-                navLogs+='---Sensor construction was blocked by the Permissions Policy.<br>';
-            } else if (error.name === 'ReferenceError') {
-                navLogs+='---Sensor is not supported by the User Agent.<br>';
-            } else {
-                navLogs+= "---Other error: "+ error.name + "<br>";
-            }
+        worker.onerror = function(ev){
+            alert('something went wrong');
         }
-    }
-
-});
 
 
         sensors = ['AbsoluteOrientationSensor', 
@@ -81,8 +53,6 @@ self.navigator.permissions.query({name: 'gyroscope', userStopRequest: true})
     window.addEventListener('load', function(){
             //document.getElementById('deviceComp').innerHTML = logs;
             document.querySelector("#test1").addEventListener('click', display);
-            document.getElementById("or2").innerHTML = navLogs;
-
 
     });
 
