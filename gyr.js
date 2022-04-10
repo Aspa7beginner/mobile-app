@@ -1,13 +1,13 @@
 let navLogs = "";
 self.navigator.permissions.query({name: 'gyroscope', userStopRequest: true})
 .then(function(result){
-    navLogs+="in nav-";
+    navLogs+="innav---";
     if(result.state === 'denied'){
         navLogs += "inerror:"+error.name+"---";
         if (error.name === 'NotAllowedError' || 'NotReadableError') {
             navLogs +='-Permission to access sensor was denied.<br> or ::--->'+ 
              'Cannot connect to the sensor.<br>';
-            alert('-Permission to access sensor was denied');
+            alert('---Permission to access sensor was denied');
         }
     }
     else{
@@ -23,11 +23,11 @@ self.navigator.permissions.query({name: 'gyroscope', userStopRequest: true})
         }catch(error){
             navLogs+="inerrorconstruction-";
             if (error.name === 'SecurityError') {
-                navLogs+='-Sensor construction was blocked by the Permissions Policy.<br>';
+                navLogs+='---Sensor construction was blocked by the Permissions Policy.<br>';
             } else if (error.name === 'ReferenceError') {
-                navLogs+='Sensor is not supported by the User Agent.<br>';
+                navLogs+='---Sensor is not supported by the User Agent.<br>';
             } else {
-                navLogs+= "-Other error: "+ error.name + "<br>";
+                navLogs+= "---Other error: "+ error.name + "<br>";
             }
         }
     }
