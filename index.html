@@ -35,11 +35,11 @@
     else{
         try{
             objdata.navLogs+="intry-";
-            var gyroscope = new Gyroscope({frequency: 20});
-                console.log("inhere");
-                gyroscope.addEventListener('reading', function(e){
-                        objdata.navLogs += e;
-                        objdata.meas += self.gyroscope.x + "";  
+            gyroscope = new Gyroscope({frequency: 20});
+            console.log("inhere");
+            gyroscope.addEventListener('reading', function(e){
+                    objdata.navLogs += e;
+                    objdata.meas += gyroscope.x + "";  
             });
             gyroscope.start();
             objdata.navLogs+="afterstart-";
