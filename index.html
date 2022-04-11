@@ -7,18 +7,56 @@
     <title>Sensors</title>
     <script type="text/javascript">
 
-        var worker = new Worker('gyr.js');
+        /*var worker = new Worker('gyr.js');
+        worker.postMessage("activate");
         worker.onmessage = function(ev){
-            var divs = document.getElementById("sens-logs");
-            divs.innerHTML = ev.data;
-            document.addEventListener('click', function(ev){
-                worker.postMessage('diactivate');
-            })
+            document.getElementById("sens-logs").innerHTML = ev.data.navLogs;
+            document.getElementById('sens-vals').innerHTML = ev.data.state;
+
         }
         worker.onerror = function(ev){
             alert('something went wrong');
+        }*/
+    let objdata = {navLogs: "",
+        meas: "",
+        state: ""};
+    
+    navigator.permissions.query({name: 'gyroscope'})
+    .then(function(result){
+    objdata.navLogs+="in nav-";
+    if(result.state === 'denied'){
+        objdata.navLogs += "inerror-";
+        if (error.name === 'NotAllowedError' || 'NotReadableError') {
+            objdata.navLogs +='-Permission to access sensor was denied.<br> or ::--->'+ 
+             'Cannot connect to the sensor.<br>';
+            alert('-Permission to access sensor was denied');
         }
+    }
+    else{
+        try{
+            objdata.navLogs+="intry-";
+            var gyroscope = new Gyroscope({frequency: 20});
+                console.log("inhere");
+                gyroscope.addEventListener('reading', function(e){
+                        objdata.navLogs += e;
+                        objdata.meas += self.gyroscope.x + "";  
+            });
+            gyroscope.start();
+            objdata.navLogs+="afterstart-";
 
+        }catch(error){
+            objdata.navLogs+="inerrorconstruction-";
+            if (error.name === 'SecurityError') {
+                objdata.navLogs+='-Sensor construction was blocked by the Permissions Policy.<br>';
+            } else if (error.name === 'ReferenceError') {
+                objdata.navLogs+='Sensor is not supported by the User Agent.<br>';
+            } else {
+                objdata.navLogs+= "-Other error: "+ error.name + "<br>";
+            }
+        }
+    }
+
+});
 
         sensors = ['AbsoluteOrientationSensor', 
                     'Accelerometer',
@@ -30,25 +68,26 @@
                     'OrientationSensor',
                     'RelativeOrientationSensor'
         ];
+        
         function display(){
             var results = new Array;
             var _ = "";
             sensors.forEach(function(element) {
-            var de = document.createElement('div');
-            if (element in window){
-                de.textContent = element + ":true";
-                results.push(element+":true")
-                _ += '<tr><td><button id="Sensor">'+ element + '</button></td><td id="sens-vals"></td><td id="sens-logs"></td>'
-            }
-            else {
-                de.textContent = element + ":false";
-                results.push(element+":");
-            }
-            de.innerHtml = "something went wrong";
-            document.getElementById('test').appendChild(de);
-        });
+                var de = document.createElement('div');
+                if (element in window){
+                    de.textContent = element + ":true";
+                    results.push(element+":true")
+                    _ += '<tr><td><button id="'+element+'">'+ element + 
+                        '</button></td><td id="sens-vals"></td><td id="sens-logs"></td>'
+                }
+                else {
+                    de.textContent = element + ":false";
+                    results.push(element+":");
+                }
+                de.innerHtml = "something went wrong";
+                document.getElementById('test').appendChild(de);
+            });
         document.getElementById('sensor-list').innerHTML = _;
-
         return results;
         }
 
@@ -56,8 +95,6 @@
             console.log(window.sensors[element] + "------");
             //activate(window.sensors[element]);  
     }
-
- 
 
     var allSensorEvents = ['devicetemperature',
                         'devicepressure',
@@ -80,15 +117,23 @@
             //log.style.backgroundColor = "rgb(0,0," + (2*ev.value) + ")";
                 
         }, false);
+
         allSensorEvents.forEach(function(elm){
             if(elm in window && window.elm !=null){
                 document.getElementById('deviceComp').appendChild(document.createTextNode("Sensor: "+elm));
             }else{
                 document.getElementById('deviceComp')
-                .appendChild(document.createTextNode(elm+":-->sensor event not detected or null"));
+                .appendChild(document.createTextNode(elm+":-->sensor event not detected or null   "));
             }
         });
+  
         display();
+        document.getElementById("sens-logs").innerHTML = objdata.navLogs;
+        document.getElementById('sens-vals').innerHTML = objdata.state;
+        document.getElementById("Gyroscope").addEventListener('click', function(ev){
+                worker.postMessage('deactivate');
+            });
+          
     });
 
     </script>

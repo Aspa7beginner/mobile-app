@@ -14,14 +14,16 @@ self.navigator.permissions.query({name: 'gyroscope', userStopRequest: true})
         try{
             navLogs+="intry-";
             self.gyroscope = new Gyroscope({frequency: 20});
-            self.gyroscope.addEventListener('reading', function(e){
-                while(self.onmessage !=='deactivate'){
-                    console.log("inhere");
+            while(self.onmessage !=='activate'){
+                console.log("inhere");
+                self.gyroscope.addEventListener('reading', function(e){ 
                     navLogs += e;
                     navLogs += self.gyroscope.x + "";
+                    self.postMessage(navLogs);
                     sleep(1000);
-                }
-            });
+                });
+            }
+
             self.gyroscope.start();
             navLogs+="afterstart-";
         }catch(error){
