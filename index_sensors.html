@@ -10,8 +10,31 @@ Thanasis Papaioannou
   <head>
     <meta name="viewport" content="width=device-width" />
     <script src="script.js"></script>
+    <script type="text/javascript">
+          var allSensorEvents = ['devicetemperature',
+                        'devicepressure',
+                        'devicelight',
+                        'deviceproximity',
+                        'devicenoise',
+                        'devicehumidity',
+                        'devicemagneticfield',
+                        'atmpressure',
+                        'humidity',
+                        'temperature']
+    window.addEventListener('load', function(){
+      allSensorEvents.forEach(function(elm){
+            if(elm in window && window.elm !=null){
+                document.getElementById('deviceComp').appendChild(document.createTextNode("Sensor: "+elm));
+            }else{
+                document.getElementById('deviceComp')
+                .appendChild(document.createTextNode(elm+":-->sensor event not detected or null   "));
+            }
+        });
+    });
+    </script>
   </head>
   <body>
     <pre id="log" style="color: red; background-color: blue;"></pre>
+    <div id="deviceComp"></div>
   </body>
 </html>
