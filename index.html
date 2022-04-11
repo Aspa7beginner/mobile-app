@@ -20,45 +20,52 @@
     let objdata = {navLogs: "",
         meas: "",
         state: ""};
-    
-    navigator.permissions.query({name: 'gyroscope'})
-    .then(function(result){
-    objdata.navLogs+="in nav-";
-    if(result.state === 'denied'){
-        objdata.navLogs += "inerror-";
-        if (ev.error.name === 'NotAllowedError' || 'NotReadableError') {
-            objdata.navLogs +='-Permission to access sensor was denied.<br> or ::--->'+ 
-             'Cannot connect to the sensor.<br>';
-            alert('-Permission to access sensor was denied');
-        }
-        ebjdata+=ev.error.name;
 
-    }
-    else{
-        try{
-            objdata.navLogs+="intry-";
-            gyroscope = new Gyroscope({frequency: 20});
-            console.log("inhere");
-            gyroscope.addEventListener('reading', function(e){
-                    objdata.navLogs += e;
-                    objdata.meas += gyroscope.x + "";  
+        let accelerometer = null;
+try {
+    accelerometer = new Accelerometer({ referenceFrame: 'device' });
+    accelerometer.addEventListener('error', function(event) {
+        // Handle runtime errors.
+        onjdata.navLogs += "intry--";
+        if (event.error.name === 'NotAllowedError') {
+
+            // Branch to code for requesting permission.
+            navigator.permissions.query({ name: 'accelerometer' })
+            .then(result => {
+                if (result.state === 'denied') {
+                   console.log('Permission to use accelerometer sensor is denied.');
+                   objdata.navLogs +='-Permission to access sensor was denied.<br>-';
+                    return;
+                }
+                // Use the sensor.
+                accelerometer.addEventListener('reading', () => reloadOnShake(accelerometer));
+                accelerometer.start();
             });
-            gyroscope.start();
-            objdata.navLogs+="afterstart-";
-
-        }catch(error){
-            objdata.navLogs+="inerrorconstruction-";
-            if (error.name === 'SecurityError') {
-                objdata.navLogs+='-Sensor construction was blocked by the Permissions Policy.<br>';
-            } else if (error.name === 'ReferenceError') {
-                objdata.navLogs+='Sensor is not supported by the User Agent.<br>';
-            } else {
-                objdata.navLogs+= "-Other error: "+ error.name + "<br>";
-            }
+        } else if (event.error.name === 'NotReadableError' ) {
+            console.log('Cannot connect to the sensor.');
+            onjdata.navLogs += 'Cannot connect to the sensor.<br>--';
         }
-    }
+    });
 
-});
+} catch (error) {
+    // Handle construction errors.
+    objdata.navLogs+="inerrorconstruction-";
+
+    if (error.name === 'SecurityError') {
+        // See the note above about feature policy.
+        console.log('Sensor construction was blocked by a feature policy.');
+        objdata.navLogs+='-Sensor construction was blocked by the Permissions Policy.<br>';
+
+    } else if (error.name === 'ReferenceError') {
+        console.log('Sensor is not supported by the User Agent.');
+        objdata.navLogs+='Sensor is not supported by the User Agent.<br>';
+
+    } else {
+        console.log(error.name);
+        objdata.navLogs+= "-Other error: "+ error.name + "<br>";
+
+    }
+}
 
         sensors = ['AbsoluteOrientationSensor', 
                     'Accelerometer',
