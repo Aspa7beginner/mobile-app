@@ -131,7 +131,7 @@
   
         display();
         document.getElementById("sens-logs").innerHTML = objdata.navLogs;
-        document.getElementById('sens-vals').innerHTML = objdata.state;
+        document.getElementById('sens-vals').innerHTML = objdata.meas;
         document.getElementById("Gyroscope").addEventListener('click', function(ev){
                 worker.postMessage('deactivate');
             });
