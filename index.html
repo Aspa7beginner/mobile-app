@@ -26,12 +26,12 @@
     objdata.navLogs+="in nav-";
     if(result.state === 'denied'){
         objdata.navLogs += "inerror-";
-        if (error.name === 'NotAllowedError' || 'NotReadableError') {
+        if (ev.error.name === 'NotAllowedError' || 'NotReadableError') {
             objdata.navLogs +='-Permission to access sensor was denied.<br> or ::--->'+ 
              'Cannot connect to the sensor.<br>';
             alert('-Permission to access sensor was denied');
         }
-        ebjdata+=error.name;
+        ebjdata+=ev.error.name;
 
     }
     else{
