@@ -2,12 +2,14 @@
 
 <html lang="en-us">
     <head>
-        <meta charset="utf-16">
+        <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1">
         <title>NoteApp</title>
-        <link href="note.css" rel="stylesheet">
+        <link rel="stylesheet" href="note2.css">
         <script src="https://kit.fontawesome.com/be3ff5ad85.js" crossorigin="anonymous"></script>        
-        <script text="text/javascript">
+        <script type="text/javascript">
+            // <![CDATA[
+            //second option
             // checking for compatibility
             window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
             window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
@@ -15,19 +17,19 @@
             // if not compatible display error message
             if (!window.indexedDB) {
                 console.log("IndexedDB not supported in your browser.");
-            };
+            }
 
             var db; // to store the db instance
             var request = window.indexedDB.open("notesDB", 1);
             request.onerror = function(event) {
                 console.log("error: " + event.target.errorCode);
-            };
+            }
             
             request.onsuccess = function(event) {
                 db = request.result;
                 console.log("success: "+ db);
                 readAll(); //if db opened successfully we can read the data of the database
-            };
+            }
 
             // on db version update handler
             request.onupgradeneeded = function(event) { 
@@ -42,7 +44,7 @@
                     var requestAdd = objectStore.add(
                         { date: Date.now() + "",
                             title: document.forms['edit-part'].elements.title.value, 
-                            color: document.forms['edit-part'].elements.colorN.value, 
+                            color: document.forms['edit-part'].elements.themeColor.value, 
                             body: document.forms['edit-part'].elements.body.value
                         });
                     requestAdd.onsuccess = function(event) {
@@ -62,7 +64,7 @@
                         var requestUpdate = objectStore.add(
                         { date: Date.now() + "",
                             title: document.forms['edit-part'].elements.title.value, 
-                            color: document.forms['edit-part'].elements.colorN.value, 
+                            color: document.forms['edit-part'].elements.themeColor.value, 
                             body: document.forms['edit-part'].elements.body.value
                         });
                         requestUpdate.onsuccess = function(event) {
@@ -89,7 +91,7 @@
                         document.getElementById('edit-part').style.display = 'flex';
                         document.getElementById("date").value = request.result.date;
                         document.getElementById("title").value = request.result.title;
-                        document.getElementById("colorN").value = request.result.colorN; 
+                        document.getElementById("themeColor").value = request.result.colorN; 
                         document.forms['edit-part'].elements.body.value = request.result.body;
                     }
                     else {
@@ -108,9 +110,9 @@
                     event.target.result.forEach(function(note) {
                         //set its attributes and content
                         let date = new Date(parseInt(note.date));
-                        inner += '<div class="note" onclick="read(this.id);">\
+                        inner += '<div id="' + note.date + '" class="note" onclick="read(this.id);">\
                                     <p>' + note.title + '</p><p>' + date.toISOString().split('T')[0] 
-                                    + "</p><p style=\"color:" + note.color + "\">&#9679;</p></div>";
+                                    + '</p><p id="theme" style="background-color:' + note.color + '"></p></div>';
                         // add it to the respactive container in home page
                         document.getElementById("notes-container").innerHTML = inner;
                     });
@@ -137,7 +139,8 @@
                     list.style.display = 'flex';
                 }
             }
-
+        
+        // ]]>   
         </script>
     </head>
     <body>
@@ -145,22 +148,28 @@
         <section id="list-part">
             <nav>
                 <div id="count">30</div>
-                <button id="new-note" onclick="changeVisibilityStatus(this.id)"><i class="fa-solid fa-plus"></i></button>
+                <button id="new-note" onclick="changeVisibilityStatus(this.id)">New</button>
                 <button id="filter">Filter</button>
             </nav>
             <div id="notes-container">
             </div> 
         </section>
         <form id="edit-part" style="display:none">
-            <input type="text" id="date" name="date" hidden></input>
-            <input type="text" id="title" name="title" placeholder="title"></input>
-            <input type="color" id="colorN" name="color">
-            <textarea id="body" name="body" rows=""></textarea>
+            <input type="text" id="date" name="date" hidden>
+            <input type="text" id="title" name="title" placeholder="Title...">
+            <select id="themeColor" name="themeColor">
+                <option value="#bfa35a">Remainder</option>
+                <option value="#8a2f2b">Important</option>
+                <option value="#308043">Shopping</option>
+                <option value="#2f5c97">Plan</option>
+                <option value="#ebeded">No Theme</option>
+            </select>
+            <textarea id="body" name="body" placeholder="Text..."></textarea>
 
             <fieldset id="note-actions">
                 <button id="save-note" onclick="changeVisibilityStatus(this.id);add();">Save</button>
-                <button id="delete-delete" onclick="changeVisibilityStatus(this.id);remove();">Delete</button>
-                <button id="cancel-note" onclick="changeVisibilityStatus(this.id)">Cancel</button>
+                <button id="delete-note" onclick="changeVisibilityStatus(this.id);remove();">Delete</button>
+                <button id="cancel-note" onclick="changeVisibilityStatus(this.id);">Cancel</button>
             </fieldset>
         </form>
     </body>
