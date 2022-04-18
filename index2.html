@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-16">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1">
+    <title>Sensors</title>
+    <script type="text/javascript">
+
+        /*var worker = new Worker('gyr.js');
+        worker.postMessage("activate");
+        worker.onmessage = function(ev){
+            document.getElementById("sens-logs").innerHTML = ev.data.navLogs;
+            document.getElementById('sens-vals').innerHTML = ev.data.state;
+
+        }
+        worker.onerror = function(ev){
+            alert('something went wrong');
+        }*/
+    let objdata = {navLogs: "",
+        meas: "",
+        state: ""};
+
+        let accelerometer = null;
+try {
+    accelerometer = new Accelerometer({ referenceFrame: 'device' });
+    accelerometer.addEventListener('error', function(event) {
+        // Handle runtime errors.
+        onjdata.navLogs += "intry--";
+        if (event.error.name === 'NotAllowedError') {
+
+            // Branch to code for requesting permission.
+            navigator.permissions.query({ name: 'accelerometer' })
+            .then(result => {
+                if (result.state === 'denied') {
+                   console.log('Permission to use accelerometer sensor is denied.');
+                   objdata.navLogs +='-Permission to access sensor was denied.<br>-';
+                    return;
+                }
+                // Use the sensor.
+                accelerometer.addEventListener('reading', () => reloadOnShake(accelerometer));
+                accelerometer.start();
+            });
+        } else if (event.error.name === 'NotReadableError' ) {
+            console.log('Cannot connect to the sensor.');
+            onjdata.navLogs += 'Cannot connect to the sensor.<br>--';
+        }
+    });
+
+} catch (error) {
+    // Handle construction errors.
+    objdata.navLogs+="inerrorconstruction-";
+
+    if (error.name === 'SecurityError') {
+        // See the note above about feature policy.
+        console.log('Sensor construction was blocked by a feature policy.');
+        objdata.navLogs+='-Sensor construction was blocked by the Permissions Policy.<br>';
+
+    } else if (error.name === 'ReferenceError') {
+        console.log('Sensor is not supported by the User Agent.');
+        objdata.navLogs+='Sensor is not supported by the User Agent.<br>';
+
+    } else {
+        console.log(error.name);
+        objdata.navLogs+= "-Other error: "+ error.name + "<br>";
+
+    }
+}
+
+        sensors = ['AbsoluteOrientationSensor', 
+                    'Accelerometer',
+                    'AmbientLightSensor',
+                    'GravitySensor',
+                    'Gyroscope',
+                    'LinearAccelerationSensor',
+                    'Magnetometer',
+                    'OrientationSensor',
+                    'RelativeOrientationSensor'
+        ];
+        
+        function display(){
+            var results = new Array;
+            var _ = "";
+            sensors.forEach(function(element) {
+                var de = document.createElement('div');
+                if (element in window){
+                    de.textContent = element + ":true";
+                    results.push(element+":true")
+                    _ += '<tr><td><button id="'+element+'">'+ element + 
+                        '</button></td><td id="sens-vals"></td><td id="sens-logs"></td>'
+                }
+                else {
+                    de.textContent = element + ":false";
+                    results.push(element+":");
+                }
+                de.innerHtml = "something went wrong";
+                document.getElementById('test').appendChild(de);
+            });
+        document.getElementById('sensor-list').innerHTML = _;
+        return results;
+        }
+
+    for (var element in window.sensors){
+            console.log(window.sensors[element] + "------");
+            //activate(window.sensors[element]);  
+    }
+
+    var allSensorEvents = ['devicetemperature',
+                        'devicepressure',
+                        'devicelight',
+                        'deviceproximity',
+                        'devicenoise',
+                        'devicehumidity',
+                        'devicemagneticfield',
+                        'atmpressure',
+                        'humidity',
+                        'temperature']
+    
+    window.addEventListener('load',function(){
+        
+        window.addEventListener("devicelight", function (ev) {
+            document.getElementById('or').innerHTML =
+            "<p> devicelight " + ev.value + "</p>";
+            // toy tric
+            //log.style.color = "rgb(" + (255 - 2*ev.value) + ",0,0)";
+            //log.style.backgroundColor = "rgb(0,0," + (2*ev.value) + ")";
+                
+        }, false);
+
+        allSensorEvents.forEach(function(elm){
+            if(elm in window && window.elm !=null){
+                document.getElementById('deviceComp').appendChild(document.createTextNode("Sensor: "+elm));
+            }else{
+                document.getElementById('deviceComp')
+                .appendChild(document.createTextNode(elm+":-->sensor event not detected or null   "));
+            }
+        });
+  
+        display();
+        document.getElementById("sens-logs").innerHTML = objdata.navLogs;
+        document.getElementById('sens-vals').innerHTML = objdata.meas;
+        document.getElementById("Gyroscope").addEventListener('click', function(ev){
+                worker.postMessage('deactivate');
+            });
+          
+    });
+
+    </script>
+</head>
+<body style="background-color:#405374; color:#abb1ba">
+    <h3>Sense Awareness</h3>
+    <table>
+        <tr><th>Sensors</th><th>Value</th><th>Period</th></tr>
+        <tr><td>ExSensor</td><td><span>Val1</span><span>Val2</span></td><td>int1</td></tr>
+    </table>
+<button> Send </button>
+<button id="test1"> show </button>
+<button onclick="showState()"> errors </button>
+<div id="test"></div>
+<div id="active"></div>
+<table id="sensor-list"></table>
+<div id="or"></div>
+<div id="or2"></div>
+<div id="deviceComp"></div>
+<div><a href="index_sensors.html">prof</a></div>
+</body>
+</html>

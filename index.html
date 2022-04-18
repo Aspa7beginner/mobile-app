@@ -1,167 +1,167 @@
 <!DOCTYPE html>
 
-<html>
-<head>
-    <meta charset="utf-16">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1">
-    <title>Sensors</title>
-    <script type="text/javascript">
+<html lang="en-us">
+    <head>
+        <meta charset="utf-16">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1">
+        <title>NoteApp</title>
+        <link href="note.css" rel="stylesheet">
+        <script src="https://kit.fontawesome.com/be3ff5ad85.js" crossorigin="anonymous"></script>        
+        <script text="text/javascript">
+            // checking for compatibility
+            window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
+            window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
+            window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange;
+            // if not compatible display error message
+            if (!window.indexedDB) {
+                console.log("IndexedDB not supported in your browser.");
+            };
 
-        /*var worker = new Worker('gyr.js');
-        worker.postMessage("activate");
-        worker.onmessage = function(ev){
-            document.getElementById("sens-logs").innerHTML = ev.data.navLogs;
-            document.getElementById('sens-vals').innerHTML = ev.data.state;
+            var db; // to store the db instance
+            var request = window.indexedDB.open("notesDB", 1);
+            request.onerror = function(event) {
+                console.log("error: " + event.target.errorCode);
+            };
+            
+            request.onsuccess = function(event) {
+                db = request.result;
+                console.log("success: "+ db);
+                readAll(); //if db opened successfully we can read the data of the database
+            };
 
-        }
-        worker.onerror = function(ev){
-            alert('something went wrong');
-        }*/
-    let objdata = {navLogs: "",
-        meas: "",
-        state: ""};
+            // on db version update handler
+            request.onupgradeneeded = function(event) { 
+                var db = event.target.result;
+                var objectStore = db.createObjectStore("notes", {keyPath:"date"});
+            }
 
-        let accelerometer = null;
-try {
-    accelerometer = new Accelerometer({ referenceFrame: 'device' });
-    accelerometer.addEventListener('error', function(event) {
-        // Handle runtime errors.
-        onjdata.navLogs += "intry--";
-        if (event.error.name === 'NotAllowedError') {
-
-            // Branch to code for requesting permission.
-            navigator.permissions.query({ name: 'accelerometer' })
-            .then(result => {
-                if (result.state === 'denied') {
-                   console.log('Permission to use accelerometer sensor is denied.');
-                   objdata.navLogs +='-Permission to access sensor was denied.<br>-';
-                    return;
-                }
-                // Use the sensor.
-                accelerometer.addEventListener('reading', () => reloadOnShake(accelerometer));
-                accelerometer.start();
-            });
-        } else if (event.error.name === 'NotReadableError' ) {
-            console.log('Cannot connect to the sensor.');
-            onjdata.navLogs += 'Cannot connect to the sensor.<br>--';
-        }
-    });
-
-} catch (error) {
-    // Handle construction errors.
-    objdata.navLogs+="inerrorconstruction-";
-
-    if (error.name === 'SecurityError') {
-        // See the note above about feature policy.
-        console.log('Sensor construction was blocked by a feature policy.');
-        objdata.navLogs+='-Sensor construction was blocked by the Permissions Policy.<br>';
-
-    } else if (error.name === 'ReferenceError') {
-        console.log('Sensor is not supported by the User Agent.');
-        objdata.navLogs+='Sensor is not supported by the User Agent.<br>';
-
-    } else {
-        console.log(error.name);
-        objdata.navLogs+= "-Other error: "+ error.name + "<br>";
-
-    }
-}
-
-        sensors = ['AbsoluteOrientationSensor', 
-                    'Accelerometer',
-                    'AmbientLightSensor',
-                    'GravitySensor',
-                    'Gyroscope',
-                    'LinearAccelerationSensor',
-                    'Magnetometer',
-                    'OrientationSensor',
-                    'RelativeOrientationSensor'
-        ];
-        
-        function display(){
-            var results = new Array;
-            var _ = "";
-            sensors.forEach(function(element) {
-                var de = document.createElement('div');
-                if (element in window){
-                    de.textContent = element + ":true";
-                    results.push(element+":true")
-                    _ += '<tr><td><button id="'+element+'">'+ element + 
-                        '</button></td><td id="sens-vals"></td><td id="sens-logs"></td>'
+            function add() {
+                var objectStore = db.transaction(["notes"], "readwrite").objectStore("notes");
+                let noteKey = document.forms['edit-part'].elements.date.value;
+                if (!noteKey){
+                    var requestAdd = objectStore.add(
+                        { date: Date.now() + "",
+                            title: document.forms['edit-part'].elements.title.value, 
+                            color: document.forms['edit-part'].elements.colorN.value, 
+                            body: document.forms['edit-part'].elements.body.value
+                        });
+                    requestAdd.onsuccess = function(event) {
+                        console.log("The note has been added to your database.");
+                    };
+                    requestAdd.onerror = function(event) {
+                        console.log("Unable to add this note in your database.");
+                    };
                 }
                 else {
-                    de.textContent = element + ":false";
-                    results.push(element+":");
+                    var requestRemove = objectStore.delete(noteKey);
+                    requestRemove.onerror = function(event) {
+                        console.log("Unable to deletedata from the database!");
+                    };
+                    requestRemove.onsuccess = function(event) {
+
+                        var requestUpdate = objectStore.add(
+                        { date: Date.now() + "",
+                            title: document.forms['edit-part'].elements.title.value, 
+                            color: document.forms['edit-part'].elements.colorN.value, 
+                            body: document.forms['edit-part'].elements.body.value
+                        });
+                        requestUpdate.onsuccess = function(event) {
+                            console.log("The note has been updated.");
+                        };
+                        requestUpdate.onerror = function(event) {
+                            console.log("Unable to add this note in your database.");
+                        };
+                    }
                 }
-                de.innerHtml = "something went wrong";
-                document.getElementById('test').appendChild(de);
-            });
-        document.getElementById('sensor-list').innerHTML = _;
-        return results;
-        }
-
-    for (var element in window.sensors){
-            console.log(window.sensors[element] + "------");
-            //activate(window.sensors[element]);  
-    }
-
-    var allSensorEvents = ['devicetemperature',
-                        'devicepressure',
-                        'devicelight',
-                        'deviceproximity',
-                        'devicenoise',
-                        'devicehumidity',
-                        'devicemagneticfield',
-                        'atmpressure',
-                        'humidity',
-                        'temperature']
-    
-    window.addEventListener('load',function(){
-        
-        window.addEventListener("devicelight", function (ev) {
-            document.getElementById('or').innerHTML =
-            "<p> devicelight " + ev.value + "</p>";
-            // toy tric
-            //log.style.color = "rgb(" + (255 - 2*ev.value) + ",0,0)";
-            //log.style.backgroundColor = "rgb(0,0," + (2*ev.value) + ")";
-                
-        }, false);
-
-        allSensorEvents.forEach(function(elm){
-            if(elm in window && window.elm !=null){
-                document.getElementById('deviceComp').appendChild(document.createTextNode("Sensor: "+elm));
-            }else{
-                document.getElementById('deviceComp')
-                .appendChild(document.createTextNode(elm+":-->sensor event not detected or null   "));
             }
-        });
-  
-        display();
-        document.getElementById("sens-logs").innerHTML = objdata.navLogs;
-        document.getElementById('sens-vals').innerHTML = objdata.meas;
-        document.getElementById("Gyroscope").addEventListener('click', function(ev){
-                worker.postMessage('deactivate');
-            });
-          
-    });
 
-    </script>
-</head>
-<body style="background-color:#405374; color:#abb1ba">
-    <h3>Sense Awareness</h3>
-    <table>
-        <tr><th>Sensors</th><th>Value</th><th>Period</th></tr>
-        <tr><td>ExSensor</td><td><span>Val1</span><span>Val2</span></td><td>int1</td></tr>
-    </table>
-<button> Send </button>
-<button id="test1"> show </button>
-<button onclick="showState()"> errors </button>
-<div id="test"></div>
-<div id="active"></div>
-<table id="sensor-list"></table>
-<div id="or"></div>
-<div id="or2"></div>
-<div id="deviceComp"></div>
-<div><a href="index_sensors.html">prof</a></div>
-</body>
+            function read(date) {
+                var request = db.transaction(["notes"])
+                    .objectStore("notes")
+                    .get(date);
+                request.onerror = function(event) {
+                    console.log("Unable to retrieve data from the database!");
+                };
+                request.onsuccess = function(event) {
+                    // Do something with the request.result!
+                    if(request.result) {
+                        document.getElementById('list-part').style.display = 'none';
+                        document.getElementById('edit-part').style.display = 'flex';
+                        document.getElementById("date").value = request.result.date;
+                        document.getElementById("title").value = request.result.title;
+                        document.getElementById("colorN").value = request.result.colorN; 
+                        document.forms['edit-part'].elements.body.value = request.result.body;
+                    }
+                    else {
+                        console.log("The requested note couldn't be found in your database!");
+                    }
+                };
+            }
+
+            function readAll() {
+                var request = db.transaction(["notes"])
+                    .objectStore("notes")
+                    .getAll();
+                request.onsuccess = function(event) {
+                    // loop over the records retrieved in event.target.result
+                    var inner = "";
+                    event.target.result.forEach(function(note) {
+                        //set its attributes and content
+                        let date = new Date(parseInt(note.date));
+                        inner += '<div class="note" onclick="read(this.id);">\
+                                    <p>' + note.title + '</p><p>' + date.toISOString().split('T')[0] 
+                                    + "</p><p style=\"color:" + note.color + "\">&#9679;</p></div>";
+                        // add it to the respactive container in home page
+                        document.getElementById("notes-container").innerHTML = inner;
+                    });
+                }
+            }
+
+            function remove() {
+                var request = db.transaction(["notes"], "readwrite")
+                .objectStore("notes")
+                .delete(document.getElementById('date').value);
+                request.onsuccess = function(event) {
+                    console.log("entry has been removed from your database.");
+                };
+            };
+        
+            function changeVisibilityStatus(trigId){
+                let list = document.getElementById('list-part');
+                let note = document.getElementById('edit-part');
+                if (trigId =='new-note'){
+                    list.style.display = 'none';
+                    note.style.display = 'flex';
+                } else {
+                    note.style.display = 'none';
+                    list.style.display = 'flex';
+                }
+            }
+
+        </script>
+    </head>
+    <body>
+        <h1> Note Pad </h1>
+        <section id="list-part">
+            <nav>
+                <div id="count">30</div>
+                <button id="new-note" onclick="changeVisibilityStatus(this.id)"><i class="fa-solid fa-plus"></i></button>
+                <button id="filter">Filter</button>
+            </nav>
+            <div id="notes-container">
+            </div> 
+        </section>
+        <form id="edit-part" style="display:none">
+            <input type="text" id="date" name="date" hidden></input>
+            <input type="text" id="title" name="title" placeholder="title"></input>
+            <input type="color" id="colorN" name="color">
+            <textarea id="body" name="body" rows=""></textarea>
+
+            <fieldset id="note-actions">
+                <button id="save-note" onclick="changeVisibilityStatus(this.id);add();">Save</button>
+                <button id="delete-delete" onclick="changeVisibilityStatus(this.id);remove();">Delete</button>
+                <button id="cancel-note" onclick="changeVisibilityStatus(this.id)">Cancel</button>
+            </fieldset>
+        </form>
+    </body>
 </html>
